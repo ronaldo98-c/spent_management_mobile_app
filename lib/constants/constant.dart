@@ -18,4 +18,8 @@ class Constants {
   static var titleThree = "Plant a tree, green the Earth";
   static var descriptionThree =
       "Find almost all types of plants that you like here.";
+
+   static List<String> months = [
+    'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+  ];
 }

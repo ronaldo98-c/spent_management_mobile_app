@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spent_mananagement_mobile/models/plants.dart';
-import 'package:spent_mananagement_mobile/screens/spent_list.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
+import 'package:spent_mananagement_mobile/screens/spent_list.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
 import 'package:spent_mananagement_mobile/screens/statistic/bar_chart.dart';
 
@@ -72,10 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.dark_mode_outlined, color: Colors.black),
-                  onPressed: () {},
-                ),
-                IconButton(
                   icon: const Stack(
                     children: [
                       Icon(Icons.notifications, color: Colors.black),
@@ -137,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const BarChartSample() ,
+              BarChartSample(title: 'Entrée annuelle', jsonString:'expenses_year_data.json', period: Constants.months) ,
               const SizedBox(
                 height: 10,
               ),
@@ -184,85 +180,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class TransactionItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final String amount;
-  final String date;
-  final bool isPositive;
-
-  const TransactionItem({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.amount,
-    required this.date,
-    required this.isPositive,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Constants.darkBlueColor,
-            radius: 20.0,
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 24.0,
-            ),
-          ),
-          const SizedBox(width: 16.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: Constants.greyColor
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                amount,
-                style: TextStyle(
-                  color: isPositive ? Colors.green : Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-              Text(
-                date,
-                style: TextStyle(
-                  color: Constants.greyColor
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

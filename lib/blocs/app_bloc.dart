@@ -1,6 +1,5 @@
 import 'app_event.dart';
 import 'app_state.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spent_mananagement_mobile/constants/message.dart';
 import 'package:spent_mananagement_mobile/controllers/login_controller.dart';
@@ -29,7 +28,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           await loginController.persistToken(result);
           emit(AuthenticatedState());
         } else {
-          debugPrint(AppMessages.unAuthorize);
           emit(const LoginErrorState(AppMessages.unAuthorize));
         }
       } catch (e) {

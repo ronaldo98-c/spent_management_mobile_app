@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:spent_mananagement_mobile/models/plants.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
-import 'package:spent_mananagement_mobile/screens/widgets/add_modal.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/add_modal.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/filter_modal.dart';
+
 
 class SpentListScreen extends StatefulWidget {
   const SpentListScreen({super.key});
@@ -46,7 +48,9 @@ class _SpentListScreenState extends State<SpentListScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            FilterModal.showAddModal(context);
+                          },
                           icon: const Icon(Icons.filter_list),
                         ),
                       ),
