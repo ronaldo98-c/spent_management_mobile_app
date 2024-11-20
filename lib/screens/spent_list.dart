@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:spent_mananagement_mobile/models/plants.dart';
+import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/group.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/add_modal.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/filter_modal.dart';
@@ -18,7 +19,8 @@ class _SpentListScreenState extends State<SpentListScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    List<Plant> plantList = Plant.plantList;
+    List<Spent> spentList = Spent.spentList;
+    List<String> groups = [ 'PROMOTION', 'Climatiseurs/Ventilateurs', 'Générateurs', 'Électroménagers'];
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -74,6 +76,8 @@ class _SpentListScreenState extends State<SpentListScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 5),
+            GroupWidget(groups: groups),
             Container(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -83,11 +87,11 @@ class _SpentListScreenState extends State<SpentListScreen> {
                   SizedBox(
                     height: size.height,
                     child: ListView.builder(
-                      itemCount: plantList.length,
+                      itemCount: spentList.length,
                       scrollDirection: Axis.vertical,
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
-                        return PageList(index: index, plantList: plantList);
+                        return PageList(index: index, spentList: spentList);
                       },
                     ),
                   ),

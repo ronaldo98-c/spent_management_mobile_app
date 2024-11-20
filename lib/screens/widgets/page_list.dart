@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:spent_mananagement_mobile/models/plants.dart';
+import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
 
 class PageList extends StatelessWidget {
   const PageList({
     super.key,
     required this.index,
-    required this.plantList,
+    required this.spentList,
   });
 
   final int index;
-  final List<Plant> plantList;
+  final List<Spent> spentList;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +37,14 @@ class PageList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    plantList[index].plantName,
+                    spentList[index].raison,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.0,
                     ),
                   ),
                   Text(
-                    plantList[index].category,
+                    spentList[index].desciption,
                     style: const TextStyle(
                       color: Colors.grey,
                     ),
@@ -56,16 +56,16 @@ class PageList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  r'$' + plantList[index].price.toString(),
-                  style: TextStyle(
-                    color: plantList[index].isFavorated ? Colors.green : Colors.black,
+                  spentList[index].amount.toString() + r' XFA',
+                  style: const TextStyle(
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),
                 ),
-                const Text(
-                  '2021-01-12 13h50',
-                  style: TextStyle(
+                Text(
+                  spentList[index].createdAt,
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),

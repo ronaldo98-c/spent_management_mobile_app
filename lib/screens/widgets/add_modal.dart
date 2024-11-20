@@ -5,6 +5,7 @@ class AddModal {
   static Future<void> showAddModal(BuildContext context) async {
     final TextEditingController textField1Controller = TextEditingController();
     final TextEditingController textField2Controller = TextEditingController();
+    final TextEditingController textAreaController = TextEditingController(); // New controller for TextArea
 
     return showDialog<void>(
       context: context,
@@ -36,6 +37,14 @@ class AddModal {
                     hintText: 'Entrez le montant'
                   ),
                 ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: textAreaController, // TextArea for additional notes
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder()
+                  ),
+                )
               ],
             ),
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spent_mananagement_mobile/models/plants.dart';
+import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
 import 'package:spent_mananagement_mobile/screens/spent_list.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
@@ -14,9 +14,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
- List<Plant> plantList = Plant.plantList.take(3).toList();
-
-  final List itemList = [
+ List<Spent> spentList = Spent.spentList.take(3).toList();
+  
+  String? selectedValue = "2024";
+  String? selectedGroup = "PROMOTION";
+  
+  List<String> itemList = [
     "2024",
     "2023",
     "2022",
@@ -26,7 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "2018",
     "2017"
   ];
-  String? selectedValue = "2024";
+  
+  List<String> groups = [ 'PROMOTION', 'Climatiseurs/Ventilateurs', 'Générateurs', 'Électroménagers'];
 
   @override
   Widget build(BuildContext context) {
@@ -107,28 +111,63 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 35,
                       fontWeight: FontWeight.bold),
                 ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton(
-                    value: selectedValue,
-                    dropdownColor: Colors.white,
-                    items: itemList.map<DropdownMenuItem<String>>((value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: TextStyle(
-                            color: Constants.greyColor,
+                Expanded(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton(
+                            value: selectedGroup,
+                            dropdownColor: Colors.white,
+                            items: groups.map<DropdownMenuItem<String>>((value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: SizedBox(
+                                  width: 110, // Définissez la largeur fixe ici
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      color: Constants.greyColor,
+                                    ),
+                                    overflow: TextOverflow.ellipsis, // Ajout de l'ellipsis
+                                    maxLines: 1, // Limite à une ligne
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedGroup = newValue;
+                              });
+                            },
                           ),
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedValue = newValue;
-                      });
-                    },
-                  ),
-                ),
+                        const SizedBox(width: 2),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton(
+                            value: selectedValue,
+                            dropdownColor: Colors.white,
+                            items: itemList.map<DropdownMenuItem<String>>((value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    color: Constants.greyColor,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedValue = newValue;
+                              });
+                            },
+                          ),
+                        )
+                      ],
+                  )
+                )
               ]),
               const SizedBox(
                 height: 10,
@@ -171,9 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 300, // Définissez une hauteur pour le ListView
                 child: ListView.builder(
                   padding: const EdgeInsets.all(8.0),
-                  itemCount: plantList.length,
+                  itemCount: spentList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return PageList(index: index, plantList: plantList);
+                    return PageList(index: index, spentList: spentList);
                   },
                 ),
               ),

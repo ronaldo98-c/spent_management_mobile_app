@@ -49,6 +49,7 @@ class FilterModal {
                   borderRadius: BorderRadius.circular(0), // Assurez-vous que le rayon est 0
                 ),
                 minimumSize: const Size(100, 50)
+                
               ),
               child: const Text('Annuler'),
               onPressed: () {
