@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
+import 'package:spent_mananagement_mobile/models/spents.dart';
 
 class FilterModal {
-  static Future<void> showAddModal(BuildContext context) async {
+  final List<Spent> spentList;
+  final Function(List<Spent>) updateSpentList;
+
+  FilterModal(this.spentList, this.updateSpentList);
+
+  static Future<void> showAddModal(BuildContext context, List<Spent> spentList, Function(List<Spent>) updateSpentList) async {
     final TextEditingController textField2Controller = TextEditingController();
 
     return showDialog<void>(
@@ -11,7 +17,7 @@ class FilterModal {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0), // Retirer les bordures
+            borderRadius: BorderRadius.circular(0),
           ),
           contentPadding: const EdgeInsets.all(30),
           content: SingleChildScrollView(
@@ -44,12 +50,11 @@ class FilterModal {
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.red ,
+                backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0), // Assurez-vous que le rayon est 0
+                  borderRadius: BorderRadius.circular(0),
                 ),
                 minimumSize: const Size(100, 50)
-                
               ),
               child: const Text('Annuler'),
               onPressed: () {
@@ -59,21 +64,40 @@ class FilterModal {
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Constants.darkBlueColor ,
+                backgroundColor: Constants.darkBlueColor,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0), // Assurez-vous que le rayon est 0
+                  borderRadius: BorderRadius.circular(0),
                 ),
                 minimumSize: const Size(100, 50)
               ),
-              child: const Text('Appliquer'),
+              child: const Text('Filtrer'),
               onPressed: () {
-                // Add your save logic here
-                Navigator.of(context).pop(); // Close modal after saving
+                List<Spent> filteredList = filterSpentList(spentList, textField2Controller.text); // Appeler la fonction de filtrage
+                updateSpentList(filteredList); // Mettre à jour spentList dans le parent
+                Navigator.of(context).pop(); // Close modal after filtering
               },
             ),
           ],
         );
       },
     );
+  }
+
+  // Fonction pour filtrer spentList en fonction de createdAt
+  static List<Spent> filterSpentList(List<Spent> spentList, String date) {
+    DateTime? filterDate = DateTime.tryParse(date); // Convertir la date en DateTime
+    if (filterDate != null) {
+      List<Spent> filteredList = spentList.where((spent) {
+        DateTime spentDate = DateTime.parse(spent.createdAt).toLocal(); // Convertir spent.createdAt en DateTime
+        return spentDate.year == filterDate.year && 
+               spentDate.month == filterDate.month && 
+               spentDate.day == filterDate.day; // Comparer uniquement les dates
+      }).toList();
+      
+      return filteredList; // Retourner la liste filtrée
+    } else {
+      debugPrint('Date invalide'); // Gérer les dates invalides
+      return []; // Retourner une liste vide en cas de date invalide
+    }
   }
 }

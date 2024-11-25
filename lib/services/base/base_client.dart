@@ -1,64 +1,74 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:spent_mananagement_mobile/constants/network_constants.dart';
-import 'package:spent_mananagement_mobile/services/base/app_exceptions.dart';
 
 class BaseClient {
-  var client = http.Client();
+  final String baseUrl = NetworkConstants.baseURL;
 
-  // get method
-  Future<dynamic> get(String api) async {}
-  
-  // post method
-  Future<dynamic> post(String api, dynamic object, {dynamic header}) async {
-    var payload = jsonEncode(object);
-    var uri = Uri.parse(NetworkConstants.baseURL + api);
+  BaseClient();
 
+  // Méthode GET générique
+  Future<dynamic> get(String endpoint, {Map<String, String>? queryParams}) async {
     try {
-      var response = await client.post(uri, body: payload, headers: header);
-      //return _processResponse(response);
-      return response;
+      final uri = Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
+      final response = await http.get(uri);
+
+      return _handleResponse(response);
     } catch (e) {
-      debugPrint("BaseClient post error: $e");
-      throw FetchDataException("No Internet connection", uri.toString());
+      throw Exception('Erreur GET: $e');
     }
   }
 
-  // put method
-  Future<dynamic> put(String api) async {}
+  // Méthode POST générique
+  Future<dynamic> post(String endpoint, dynamic data) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
 
-  // process response method
-  dynamic _processResponse(http.Response response) {
-    var bodyBytes = utf8.decode(response.bodyBytes);
-    switch (response.statusCode) {
-      case 200:
-        var responseJson = bodyBytes;
-        return responseJson;
-      case 201:
-        var responseJson = utf8.decode(response.bodyBytes);
-        return responseJson;
-      case 400:
-        var errors = json.decode(bodyBytes)["errors"];
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('Erreur POST: $e');
+    }
+  }
 
-        throw BadRequestException(
-            errors[errors.keys.elementAt(0)][0].toString(),
-            response.request?.url.toString());
-      case 401:
-      case 403:
-        var errors = json.decode(bodyBytes)["errors"];
+  // Méthode PUT générique
+  Future<dynamic> put(String endpoint, dynamic data) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http.put(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
 
-        throw UnAuthorizedException(
-            errors[errors.keys.elementAt(0)][0].toString(),
-            response.request?.url.toString());
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('Erreur PUT: $e');
+    }
+  }
 
-      case 500:
-        throw InternalServerException(
-            "something went wrong", response.request?.url.toString());
-      default:
-        throw FetchDataException(
-            "Error occur with code : ${response.statusCode}",
-            response.request?.url.toString());
+  // Méthode DELETE générique
+  Future<dynamic> delete(String endpoint) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http.delete(uri);
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('Erreur DELETE: $e');
+    }
+  }
+
+  // Gestion des réponses HTTP
+  dynamic _handleResponse(http.Response response) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Erreur HTTP (${response.statusCode}): ${response.body}');
     }
   }
 }

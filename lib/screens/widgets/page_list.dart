@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
@@ -14,8 +15,6 @@ class PageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  //  Size size = MediaQuery.of(context).size;
-
     return GestureDetector(
       onTap: () { },
       child: Padding(
@@ -26,10 +25,10 @@ class PageList extends StatelessWidget {
               backgroundColor: Constants.darkBlueColor,
               radius: 20.0,
               child:  const Icon(
-                Icons.directions_bus,
+                Icons.money_rounded,
                 color: Colors.white,
-                size: 24.0,
-              ),
+                size: 24.0
+              )
             ),
             const SizedBox(width: 16.0),
             Expanded(
@@ -44,7 +43,7 @@ class PageList extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    spentList[index].desciption,
+                    spentList[index].desciption ?? '',
                     style: const TextStyle(
                       color: Colors.grey,
                     ),
@@ -61,13 +60,14 @@ class PageList extends StatelessWidget {
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
-                  ),
+                  )
                 ),
                 Text(
-                  spentList[index].createdAt,
+                  DateFormat('dd/MM/yyyy HH:mm')
+                  .format(DateTime.parse(spentList[index].createdAt)),
                   style: const TextStyle(
-                    color: Colors.grey,
-                  ),
+                    color: Colors.grey
+                  )
                 ),
               ],
             ),

@@ -2,7 +2,7 @@ import '../../theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:spent_mananagement_mobile/widgets/custom_scaffold.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/custom_scaffold.dart';
 import 'package:spent_mananagement_mobile/screens/authentication/signin_screen.dart';
 
 class SignUpScreen extends StatefulWidget {

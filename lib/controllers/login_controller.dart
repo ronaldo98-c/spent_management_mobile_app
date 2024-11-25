@@ -1,16 +1,12 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:spent_mananagement_mobile/services/auth_service.dart';
-import 'package:spent_mananagement_mobile/controllers/base_controller.dart';
 import 'package:spent_mananagement_mobile/services/base/app_exceptions.dart';
 
-class LoginController extends  BaseController {
+class LoginController {
 
- // var _loading = false;
   final storage = const FlutterSecureStorage();
   final AuthService _authService = AuthService(); 
 
-
-//  bool get loading => _loading;
 
   // validate login form
   bool validate(String email, String password) {
@@ -42,9 +38,6 @@ class LoginController extends  BaseController {
     
     final valid = validate(email , password);
     if (valid) {
-      //_loading = true;
-     // await Future.delayed(const Duration(seconds: 2));
-      // ? login method
       return await _authService.login(
         {
           "email": email.toString(),

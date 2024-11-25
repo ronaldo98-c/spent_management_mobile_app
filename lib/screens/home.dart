@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:spent_mananagement_mobile/models/spents.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:spent_mananagement_mobile/data_manager.dart';
+import 'package:spent_mananagement_mobile/date_fetcher.dart';
+import 'package:spent_mananagement_mobile/models/group.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
 import 'package:spent_mananagement_mobile/screens/spent_list.dart';
+import 'package:spent_mananagement_mobile/models/expense_data.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
+import 'package:spent_mananagement_mobile/controllers/api_controller.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/empty_list.dart';
 import 'package:spent_mananagement_mobile/screens/statistic/bar_chart.dart';
-
+import 'package:spent_mananagement_mobile/screens/widgets/squeleton_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,12 +20,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
- List<Spent> spentList = Spent.spentList.take(3).toList();
-  
+  late ApiController apiController;
+  late DataManager<Group> groupManager;
+  late DataFetcher<Group> groupFetcher;
+
+  bool isLoading = false;
+  int? selectedGroup = 1;
+  List<Group> groups = [];
   String? selectedValue = "2024";
-  String? selectedGroup = "PROMOTION";
-  
-  List<String> itemList = [
+  late ExpensesData expensesData = ExpensesData(data: [], spent: []);
+
+  final List<String> itemList = [
     "2024",
     "2023",
     "2022",
@@ -29,8 +40,40 @@ class _HomeScreenState extends State<HomeScreen> {
     "2018",
     "2017"
   ];
-  
-  List<String> groups = [ 'PROMOTION', 'Climatiseurs/Ventilateurs', 'Générateurs', 'Électroménagers'];
+
+  @override
+  void initState() {
+    super.initState();
+    apiController = ApiController();
+    groupManager = DataManager<Group>(apiController, 'group/list');
+    groupFetcher = DataFetcher<Group>();
+    fetchGroups();
+  }
+
+  // Récupérer les groupes
+  void fetchGroups() {
+    groupFetcher.fetchAndSetData(
+        fetchData: () => groupManager.fetchData((json) => Group.fromJson(json)),
+        onSetData: (data) => setState(() => groups = data),
+        onComplete: () => {},
+        context: context);
+  }
+
+  // Récupérer les données des dépenses
+  void fetchExpenseData(groupId, year) {
+    setState(() => isLoading = true);
+    apiController
+        .fetchData('spent/statistic/group/$groupId/year/$year')
+        .then((data) {
+      setState(() {
+        isLoading = false;
+        expensesData = ExpensesData.fromJson(data);
+      });
+    }).catchError((error) {
+      setState(() => isLoading = false);
+      debugPrint("Erreur lors de la récupération des données : ${error.toString()}");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +81,16 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0, // Remove shadow
+        elevation: 0,
         title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Left side with avatar and welcome text
-             Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Partie gauche : Avatar et message de bienvenue
+            Row(
               children: [
                 const CircleAvatar(
-                  backgroundImage: NetworkImage('https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg'), // Use a local image or network image here
+                  backgroundImage: NetworkImage(
+                      'https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg'),
                   radius: 20,
                 ),
                 const SizedBox(width: 10),
@@ -55,10 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       'Bienvenu',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Constants.greyColor
-                      ),
+                      style:
+                          TextStyle(fontSize: 14, color: Constants.greyColor),
                     ),
                     const Text(
                       'Mr Ronaldo',
@@ -72,25 +114,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            // Right side with icons
-            Row(
-              children: [
-                IconButton(
-                  icon: const Stack(
-                    children: [
-                      Icon(Icons.notifications, color: Colors.black),
-                      Positioned(
-                        right: 0,
-                        child: CircleAvatar(
-                          radius: 4,
-                          backgroundColor: Colors.red,
-                        ),
-                      ),
-                    ],
+            // Partie droite : Icones
+            IconButton(
+              icon: const Stack(
+                children: [
+                  Icon(Icons.notifications, color: Colors.black),
+                  Positioned(
+                    right: 0,
+                    child: CircleAvatar(
+                      radius: 4,
+                      backgroundColor: Colors.red,
+                    ),
                   ),
-                  onPressed: () {},
-                ),
-              ],
+                ],
+              ),
+              onPressed: () {},
             ),
           ],
         ),
@@ -102,59 +140,65 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                 Text(
-                  'Statistics',
-                  style: TextStyle(
+                  Text(
+                    'Statistiques',
+                    style: TextStyle(
                       color: Constants.darkBlueColor,
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold),
-                ),
-                Expanded(
-                  child: Row(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         DropdownButtonHideUnderline(
-                          child: DropdownButton(
-                            value: selectedGroup,
+                          child: DropdownButton<int>(
+                            value:
+                                selectedGroup, // Vérification de la valeur initiale
                             dropdownColor: Colors.white,
-                            items: groups.map<DropdownMenuItem<String>>((value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
+                            items: groups
+                                .map<DropdownMenuItem<int>>((Group value) {
+                              return DropdownMenuItem<int>(
+                                value: value
+                                    .id, // S'assurer que `value.name` n'est pas null
                                 child: SizedBox(
-                                  width: 110, // Définissez la largeur fixe ici
+                                  width: 80,
                                   child: Text(
-                                    value,
+                                    value.name ??
+                                        'Inconnu', // Fallback pour les valeurs nulles
                                     style: TextStyle(
                                       color: Constants.greyColor,
                                     ),
-                                    overflow: TextOverflow.ellipsis, // Ajout de l'ellipsis
-                                    maxLines: 1, // Limite à une ligne
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
                                 ),
                               );
-                            }).toList(),
-                            onChanged: (String? newValue) {
+                            }).toList(), // toSet() non nécessaire si `value.name` est unique
+                            onChanged: (int? newValue) {
                               setState(() {
-                                selectedGroup = newValue;
+                                selectedGroup =
+                                    newValue; // Gérer les valeurs nulles
                               });
+                              fetchExpenseData(newValue, selectedValue);
                             },
                           ),
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 10),
                         DropdownButtonHideUnderline(
-                          child: DropdownButton(
+                          child: DropdownButton<String>(
                             value: selectedValue,
                             dropdownColor: Colors.white,
-                            items: itemList.map<DropdownMenuItem<String>>((value) {
+                            items:
+                                itemList.map<DropdownMenuItem<String>>((value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(
                                   value,
-                                  style: TextStyle(
-                                    color: Constants.greyColor,
-                                  ),
+                                  style: TextStyle(color: Constants.greyColor),
                                 ),
                               );
                             }).toList(),
@@ -162,59 +206,68 @@ class _HomeScreenState extends State<HomeScreen> {
                               setState(() {
                                 selectedValue = newValue;
                               });
+                              fetchExpenseData(selectedGroup, newValue);
                             },
                           ),
-                        )
+                        ),
                       ],
+                    ),
                   )
-                )
-              ]),
-              const SizedBox(
-                height: 10,
+                ],
               ),
-              BarChartSample(title: 'Entrée annuelle', jsonString:'expenses_year_data.json', period: Constants.months) ,
-              const SizedBox(
-                height: 10,
+              const SizedBox(height: 10),
+              BarChartSample(
+                title: 'Entrée annuelle',
+                isLoading: isLoading,
+                data: expensesData.data,
+                period: Constants.months,
               ),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                    Text(
-                    "Dernieres dépenses",
+                  Text(
+                    "Dernières dépenses",
                     style: TextStyle(
-                        fontSize: 18,
-                        color: Constants.darkBlueColor,
-                        fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      color: Constants.darkBlueColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  GestureDetector( // Ajout de GestureDetector
+                  GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const SpentListScreen()
-                        )
-                      ); // Remplacez '/spenList' par le nom de la route de votre SpenListScreen
+                          builder: (context) => const SpentListScreen(),
+                        ),
+                      );
                     },
                     child: Text(
                       "Voir plus",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Constants.greyColor),
+                      style:
+                          TextStyle(fontSize: 13, color: Constants.greyColor),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 16,
-              ),
-              SizedBox(
-                height: 300, // Définissez une hauteur pour le ListView
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  itemCount: spentList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return PageList(index: index, spentList: spentList);
-                  },
-                ),
+              const SizedBox(height: 16),
+              Skeletonizer(
+                enabled: isLoading,
+                child: SizedBox(
+                  height: expensesData.spent.isNotEmpty ? 300 : null,
+                  child: isLoading
+                      ? const SqueletonList()
+                      : expensesData.spent.isNotEmpty
+                          ? ListView.builder(
+                              padding: const EdgeInsets.all(8.0),
+                              itemCount: expensesData.spent.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return PageList(
+                                    index: index, spentList: expensesData.spent);
+                              },
+                            )
+                          : const EmptyList(wording: "Aucune dépense")
+                )
               ),
             ],
           ),

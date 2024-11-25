@@ -3,7 +3,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spent_mananagement_mobile/blocs/app.dart';
 import 'package:spent_mananagement_mobile/theme/theme.dart';
-import 'package:spent_mananagement_mobile/widgets/custom_scaffold.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/custom_scaffold.dart';
 import 'package:spent_mananagement_mobile/screens/authentication/signup_screen.dart';
 
 class SignInScreen extends StatefulWidget {

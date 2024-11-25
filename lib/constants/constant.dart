@@ -6,6 +6,7 @@ class Constants {
   static var primaryColor = const Color(0xff296e48);
   static var blackColor = Colors.black;
   static var greyColor =  Colors.grey.shade500;
+  static var singleGreyColor =  const Color.fromRGBO(231, 232, 235,1);
   
 
   //Onboarding texts
