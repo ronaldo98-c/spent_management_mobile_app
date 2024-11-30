@@ -5,8 +5,8 @@ import 'package:spent_mananagement_mobile/date_fetcher.dart';
 import 'package:spent_mananagement_mobile/models/group.dart';
 import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
-import 'package:spent_mananagement_mobile/screens/widgets/add_group.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/group.dart';
+import 'package:spent_mananagement_mobile/screens/widgets/add_group.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/add_spent.dart';
 import 'package:spent_mananagement_mobile/controllers/api_controller.dart';
@@ -66,14 +66,17 @@ class _SpentListScreenState extends State<SpentListScreen> {
         context: context);
   }
 
+  //
   void updateSpentList(List<Spent> data) {
     setState(() => spentList = data);
   }
 
+  //
   void updateGroupList(List<Group> data) {
     setState(() => groups = data);
   }
 
+  //
   void updateSelectedChip(int index) {
     setState(() => selectedChipIndex = index);
   }
