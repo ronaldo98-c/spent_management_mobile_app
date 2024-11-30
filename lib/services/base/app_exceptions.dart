@@ -24,11 +24,6 @@ class BadRequestException extends NetworkException {
       : super(message, "Bad Request", url);
 }
 
-class ApiNotRespondingException extends NetworkException {
-  ApiNotRespondingException(String? message, String? url)
-      : super(message, "Api not responding", url);
-}
-
 class FetchDataException extends NetworkException {
   FetchDataException(String? message, String? url)
       : super(message, "unable to process", url);

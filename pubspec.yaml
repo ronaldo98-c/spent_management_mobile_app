@@ -41,7 +41,6 @@ dependencies:
   equatable: ^2.0.5
   http: ^1.2.2
   meta: ^1.12.0
-  shared_preferences: ^2.2.3
   fluttertoast: ^8.2.5
   flutter_screenutil: ^5.9.3
   fl_chart: ^0.69.0

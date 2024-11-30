@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:spent_mananagement_mobile/blocs/app.dart';
 import 'package:spent_mananagement_mobile/data_manager.dart';
 import 'package:spent_mananagement_mobile/date_fetcher.dart';
 import 'package:spent_mananagement_mobile/models/group.dart';
@@ -10,6 +12,7 @@ import 'package:spent_mananagement_mobile/screens/widgets/page_list.dart';
 import 'package:spent_mananagement_mobile/controllers/api_controller.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/empty_list.dart';
 import 'package:spent_mananagement_mobile/screens/statistic/bar_chart.dart';
+import 'package:spent_mananagement_mobile/controllers/profil_controller.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/squeleton_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late String? user = "...";
   late ApiController apiController;
   late DataManager<Group> groupManager;
   late DataFetcher<Group> groupFetcher;
@@ -48,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     groupManager = DataManager<Group>(apiController, 'group/list');
     groupFetcher = DataFetcher<Group>();
     fetchGroups();
+    _loadUserData();
   }
 
   // Récupérer les groupes
@@ -71,7 +76,15 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }).catchError((error) {
       setState(() => isLoading = false);
-      debugPrint("Erreur lors de la récupération des données : ${error.toString()}");
+      debugPrint(
+          "Erreur lors de la récupération des données : ${error.toString()}");
+    });
+  }
+
+  Future<void> _loadUserData() async {
+    final loadedUser = await ProfilController().getUserData();
+    setState(() {
+      user = loadedUser; // Fin du chargement
     });
   }
 
@@ -102,9 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       style:
                           TextStyle(fontSize: 14, color: Constants.greyColor),
                     ),
-                    const Text(
-                      'Mr Ronaldo',
-                      style: TextStyle(
+                    Text(
+                      "Mr, $user",
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -118,17 +131,12 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Stack(
                 children: [
-                  Icon(Icons.notifications, color: Colors.black),
-                  Positioned(
-                    right: 0,
-                    child: CircleAvatar(
-                      radius: 4,
-                      backgroundColor: Colors.red,
-                    ),
-                  ),
+                  Icon( Icons.logout_outlined, color: Colors.black)
                 ],
               ),
-              onPressed: () {},
+              onPressed: () {
+                BlocProvider.of<AppBloc>(context).add(LoggedOut());
+              },
             ),
           ],
         ),
@@ -252,23 +260,23 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               Skeletonizer(
-                enabled: isLoading,
-                child: SizedBox(
-                  height: expensesData.spent.isNotEmpty ? 300 : null,
-                  child: isLoading
-                      ? const SqueletonList()
-                      : expensesData.spent.isNotEmpty
-                          ? ListView.builder(
-                              padding: const EdgeInsets.all(8.0),
-                              itemCount: expensesData.spent.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return PageList(
-                                    index: index, spentList: expensesData.spent);
-                              },
-                            )
-                          : const EmptyList(wording: "Aucune dépense")
-                )
-              ),
+                  enabled: isLoading,
+                  child: SizedBox(
+                      height: expensesData.spent.isNotEmpty ? 300 : null,
+                      child: isLoading
+                          ? const SqueletonList()
+                          : expensesData.spent.isNotEmpty
+                              ? ListView.builder(
+                                  padding: const EdgeInsets.all(8.0),
+                                  itemCount: expensesData.spent.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return PageList(
+                                        index: index,
+                                        spentList: expensesData.spent);
+                                  },
+                                )
+                              : const EmptyList(wording: "Aucune dépense"))),
             ],
           ),
         ),

@@ -11,7 +11,7 @@ class ApiController {
     try {
       return await _baseClient.get(endpoint, queryParams: params);
     } catch (e) {
-      throw InvalidException('Erreur lors de la récupération des données: $e', false);
+      throw FetchDataException('Erreur lors de la récupération des données: $e', endpoint);
     }
   }
 
@@ -20,7 +20,7 @@ class ApiController {
     try {
       return await _baseClient.post(endpoint, data);
     } catch (e) {
-      throw InvalidException('Erreur lors de l\'envoi des données: $e', false);
+      throw InternalServerException('Erreur lors de l\'envoi des données: $e', endpoint);
     }
   }
 
@@ -29,8 +29,8 @@ class ApiController {
     try {
       return await _baseClient.put(endpoint, data);
     } catch (e) {
-      throw InvalidException(
-          'Erreur lors de la mise à jour des données: $e', false);
+      throw InternalServerException(
+          'Erreur lors de la mise à jour des données: $e', endpoint);
     }
   }
 
@@ -39,8 +39,8 @@ class ApiController {
     try {
       return await _baseClient.delete(endpoint);
     } catch (e) {
-      throw InvalidException(
-          'Erreur lors de la suppression des données: $e', false);
+      throw InternalServerException(
+          'Erreur lors de la suppression des données: $e', endpoint);
     }
   }
 }

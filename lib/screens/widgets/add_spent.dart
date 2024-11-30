@@ -1,16 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
 import 'package:spent_mananagement_mobile/controllers/api_controller.dart';
-import 'package:spent_mananagement_mobile/models/spents.dart';
 
-class AddModal<T> {
+
+class AddSpent<T> {
   final List<Spent> itemList;
   final int? selectedChipIndex;
   final Function(List<Spent>) updateSpentList;
 
-  AddModal(this.itemList, this.selectedChipIndex,
+  AddSpent(this.itemList, this.selectedChipIndex,
       this.updateSpentList); // Constructeur pour initialiser la liste
 
   static Future<void> showAddModal<T>(
@@ -151,8 +150,7 @@ class AddModal<T> {
 
     // Construire l'objet newItem sous forme de Map
     Map<String, dynamic> newItem = {
-      "group_id":
-          selectedChipIndex, // Remplacez par la valeur appropriée si nécessaire
+      "group_id": selectedChipIndex, // Remplacez par la valeur appropriée si nécessaire
       "amount": int.tryParse(amount) ?? 0, // Convertir le montant en entier
       "raison": raison,
       "description": description

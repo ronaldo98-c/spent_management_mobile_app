@@ -6,4 +6,5 @@ class NetworkConstants {
   // endpoints
   static const String registerAPI = "register";
   static const String loginAPI = "login";
+  
 }

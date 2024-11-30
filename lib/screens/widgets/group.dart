@@ -47,13 +47,16 @@ class _GroupWidgetState extends State<GroupWidget> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 7),
                     child: Chip(
-                      label: Text(category.name ?? '',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                              color: widget.selectedChipIndex == index
-                                  ? Colors.white // Couleur lorsque sélectionné
-                                  : Constants.greyColor)),
+                      label: Text(
+                        category.name ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: widget.selectedChipIndex == index
+                              ? Colors.white // Couleur lorsque sélectionné
+                              : Constants.greyColor
+                        )
+                      ),
                       backgroundColor: widget.selectedChipIndex == index
                           ? Constants
                               .darkBlueColor // Couleur lorsque sélectionné

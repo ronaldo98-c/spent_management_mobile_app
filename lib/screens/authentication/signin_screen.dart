@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spent_mananagement_mobile/blocs/app.dart';
 import 'package:spent_mananagement_mobile/theme/theme.dart';
 import 'package:spent_mananagement_mobile/screens/widgets/custom_scaffold.dart';
 import 'package:spent_mananagement_mobile/screens/authentication/signup_screen.dart';
+import 'package:spent_mananagement_mobile/screens/authentication/reset_password.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -14,10 +14,11 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  bool rememberPassword = false;
-  final _username = TextEditingController();
+
+  bool _eyeClosed = false;
+  final _email = TextEditingController();
   final _password = TextEditingController();
-  final _formSignInKey = GlobalKey<FormState>();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,6 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       child: SingleChildScrollView(
                         child: Form(
-                          key: _formSignInKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -67,7 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                               const SizedBox(height: 40),
                               TextFormField(
-                                controller: _username,
+                                controller: _email,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Veuillez entrer votre e-mail';
@@ -91,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               const SizedBox(height: 25),
                               TextFormField(
                                 controller: _password,
-                                obscureText: true,
+                                obscureText: _eyeClosed,
                                 obscuringCharacter: '*',
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -101,7 +101,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                 },
                                 decoration: InputDecoration(
                                   label: const Text('Mot de passe'),
-                                  suffixIcon: const Icon(Icons.remove_red_eye),
+                                  suffixIcon: IconButton(
+                                    icon: _eyeClosed ? const Icon(Icons.visibility_off) : const Icon(Icons.remove_red_eye),
+                                    onPressed: () => setState(() => _eyeClosed = !_eyeClosed),
+                                  ),
                                   hintText: 'Entrer le mot de passe',
                                   hintStyle: const TextStyle(color: Colors.black26),
                                   border: OutlineInputBorder(
@@ -118,24 +121,16 @@ class _SignInScreenState extends State<SignInScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Checkbox(
-                                        value: rememberPassword,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            rememberPassword = value!;
-                                          });
-                                        },
-                                        activeColor: lightColorScheme.primary,
-                                      ),
-                                      const Text(
-                                        'Se souvenir de moi',
-                                        style: TextStyle(color: Colors.black45),
-                                      ),
-                                    ],
-                                  ),
+                                  const SizedBox(width: 50),
                                   GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (e) => const ResetPasswordScreen(),
+                                        ),
+                                      );
+                                    },
                                     child: Text(
                                       'Mot de passe oublié?',
                                       style: TextStyle(
@@ -153,57 +148,17 @@ class _SignInScreenState extends State<SignInScreen> {
                                   onPressed: isLoading
                                       ? null
                                       : () {
-                                          if (_formSignInKey.currentState!.validate()) {
-                                            BlocProvider.of<AppBloc>(context).add(
-                                              LoginRequested(
-                                                username: _username.text,
-                                                password: _password.text,
-                                              ),
-                                            );
-                                          }
+                                          BlocProvider.of<AppBloc>(context).add(
+                                            LoginRequested(
+                                              username: _email.text,
+                                              password: _password.text,
+                                            ),
+                                          );
                                         },
                                   child: isLoading
                                       ? const CircularProgressIndicator(color: Colors.white)
                                       : const Text('Se connecter'),
                                 ),
-                              ),
-                              const SizedBox(height: 25),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      thickness: 0.7,
-                                      color: Colors.grey.withOpacity(0.5),
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 0,
-                                      horizontal: 10,
-                                    ),
-                                    child: Text(
-                                      'Se connecter avec',
-                                      style: TextStyle(color: Colors.black45),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      thickness: 0.7,
-                                      color: Colors.grey.withOpacity(0.5),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 25),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Brand(Brands.facebook_f),
-                                  Brand(Brands.twitter),
-                                  Brand(Brands.google),
-                                  Brand(Brands.apple_logo),
-                                ],
                               ),
                               const SizedBox(height: 25),
                               Row(
@@ -231,8 +186,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     ),
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 20),
+                              )
                             ],
                           ),
                         ),

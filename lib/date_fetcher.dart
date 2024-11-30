@@ -16,7 +16,6 @@ class DataFetcher<T> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text( 'Erreur lors de la récupération des éléments : ${e.toString()}')),
       );
-      debugPrint('Erreur lors de la récupération des éléments : ${e.toString()}');
     } finally {
       onComplete(); // Action finale
     }
