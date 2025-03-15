@@ -15,6 +15,7 @@ class AddGroup<T> {
       List<Group> itemList,
       Function(List<Group>) updateGroupList) async {
     final TextEditingController textField1Controller = TextEditingController();
+    final TextEditingController textField2Controller = TextEditingController();
 
     bool isLoading = false; // Variable d'état pour le loader
 
@@ -27,7 +28,7 @@ class AddGroup<T> {
             borderRadius: BorderRadius.circular(0),
           ),
           contentPadding: const EdgeInsets.all(30),
-          title: const Text('Nouvelle'),
+          title: const Text('Nouveau'),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -37,7 +38,15 @@ class AddGroup<T> {
                       border: OutlineInputBorder(),
                       labelText: 'Nom',
                       hintText: 'Entrez le nom du groupe'),
-                )
+                ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: textField2Controller,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Limit',
+                      hintText: 'Entrez le montant limit de dépense'),
+                ),
               ],
             ),
           ),
@@ -67,7 +76,7 @@ class AddGroup<T> {
                   ? null // Désactiver le bouton si le loader est affiché
                   : () async { 
                       // Vérifier si tous les TextFields sont renseignés
-                      if (textField1Controller.text.isEmpty ) {
+                      if (textField1Controller.text.isEmpty || textField2Controller.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Veuillez remplir tous les champs.')),);
                         return; // Sortir de la fonction si des champs sont vides
                       }
@@ -76,6 +85,7 @@ class AddGroup<T> {
                       isLoading = true; // Update loading state
                       await _handleAddItem( // Await the function call
                           textField1Controller,
+                          textField2Controller,
                           itemList,
                           context,
                           updateGroupList,
@@ -98,6 +108,7 @@ class AddGroup<T> {
   static Future<void> _handleAddItem<T>(
       // Change to return Future<void>
       TextEditingController textField1Controller,
+      TextEditingController textField2Controller,
       List<Group> itemList,
       BuildContext context,
       Function(List<Group>) updateGroupList,
@@ -106,10 +117,11 @@ class AddGroup<T> {
     // Récupérer les valeurs des contrôleurs de texte
     isLoading = true;
     String name = textField1Controller.text;
-
+    int spendingLimit = int.parse(textField2Controller.text);
     // Construire l'objet newItem sous forme de Map
     Map<String, dynamic> newItem = { // Convertir le montant en entier
       "name": name,
+      "spending_limit": spendingLimit,
     };
 
     // Appel de l'ApiController pour envoyer les données

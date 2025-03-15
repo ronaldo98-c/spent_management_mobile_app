@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:spent_mananagement_mobile/blocs/app.dart';
+import 'package:spent_mananagement_mobile/constants/image_constants.dart';
 import 'package:spent_mananagement_mobile/data_manager.dart';
 import 'package:spent_mananagement_mobile/date_fetcher.dart';
 import 'package:spent_mananagement_mobile/models/group.dart';
@@ -31,19 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   int? selectedGroup = 1;
   List<Group> groups = [];
-  String? selectedValue = "2024";
-  late ExpensesData expensesData = ExpensesData(data: [], spent: []);
+  String? selectedValue =  DateTime.now().year.toString();
+  ExpensesData expensesData = ExpensesData(data: [], spent: []);
 
-  final List<String> itemList = [
-    "2024",
-    "2023",
-    "2022",
-    "2021",
-    "2020",
-    "2019",
-    "2018",
-    "2017"
-  ];
+  final List<String> itemList = List<String>.generate(8, (index) {
+    return (DateTime.now().year - index).toString();
+  });
 
   @override
   void initState() {
@@ -68,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void fetchExpenseData(groupId, year) {
     setState(() => isLoading = true);
     apiController
-        .fetchData('spent/statistic/group/$groupId/year/$year')
+        .fetchData('spent/statistic?group_id=$groupId&year=$year')
         .then((data) {
       setState(() {
         isLoading = false;
@@ -102,8 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      'https://static.vecteezy.com/system/resources/thumbnails/005/545/335/small/user-sign-icon-person-symbol-human-avatar-isolated-on-white-backogrund-vector.jpg'),
+                  backgroundImage:  AssetImage(AppImages.user),
                   radius: 20,
                 ),
                 const SizedBox(width: 10),

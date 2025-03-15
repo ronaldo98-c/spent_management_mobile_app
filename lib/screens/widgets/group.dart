@@ -36,19 +36,19 @@ class _GroupWidgetState extends State<GroupWidget> {
                   children: List.generate(4, (index) => buildChip())),
             )
           : Row(
-              children: widget.groups.map((category) {
+              children: widget.groups.map((group) {
                 // Utilisation de widget.groups
-                int index = category.id;
+                int index = group.id;
                 return GestureDetector(
                   onTap: () {
                     widget.updateSelectedChip(index);
-                    widget.fetchSpents(category.id);
+                    widget.fetchSpents(group.id);
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 7),
                     child: Chip(
                       label: Text(
-                        category.name ?? '',
+                        group.name ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,

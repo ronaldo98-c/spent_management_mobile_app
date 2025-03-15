@@ -29,6 +29,7 @@ class _SpentListScreenState extends State<SpentListScreen> {
   late DataFetcher<Group> groupFetcher;
 
   List<Spent> spentList = [];
+  List<Spent> filterSpentList = [];
   List<Group> groups = [];
   int? selectedChipIndex;
   bool isLoadingSpents = false;
@@ -51,7 +52,7 @@ class _SpentListScreenState extends State<SpentListScreen> {
 
     dataFetcher.fetchAndSetData(
         fetchData: () => dataManager.fetchData((json) => Spent.fromJson(json)),
-        onSetData: (data) => setState(() => spentList = data),
+        onSetData: (data) => { setState(() => spentList = data), setState(() => filterSpentList = data) },
         onComplete: () => setState(() => isLoadingSpents = false),
         context: context);
   }
@@ -91,7 +92,7 @@ class _SpentListScreenState extends State<SpentListScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -114,7 +115,7 @@ class _SpentListScreenState extends State<SpentListScreen> {
                         ),
                         child: IconButton(
                           onPressed: () {
-                            FilterModal.showAddModal(context, spentList, updateSpentList);
+                            FilterModal.showAddModal(context, filterSpentList, updateSpentList);
                           },
                           icon: const Icon(Icons.filter_list),
                         ),
@@ -139,7 +140,6 @@ class _SpentListScreenState extends State<SpentListScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 5),
             Row(
               children: [
                 GroupWidget(
@@ -150,31 +150,50 @@ class _SpentListScreenState extends State<SpentListScreen> {
                   updateSelectedChip: updateSelectedChip
                 ),
                 const SizedBox(width: 5),
-                Chip(
-                  backgroundColor: Constants.singleGreyColor,
-                  side: BorderSide(
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
                     color: Constants.singleGreyColor,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                  child: IconButton(
+                    onPressed: () {
+                       AddGroup.showAddModal(context, groups, updateGroupList);// Show modal
+                    },
+                    icon: const Icon(Icons.add),
                   ),
-                  label: Center(
-                    child: IconButton(
-                      onPressed: () {
-                        AddGroup.showAddModal(context, groups, updateGroupList); // Show modal
-                      }, 
-                      icon: const Icon(Icons.add, size: 15),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8) // Ajustement du padding
-                )
+                ),
               ],
             ),
+            const SizedBox(height:3),
             Container(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (spentList.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // Aligner à gauche
+                    mainAxisSize: MainAxisSize.min, // Ajuste la taille au contenu
+                    children: [
+                      Text(
+                         "Total: ${spentList.fold(0, (sum, item) => sum + (item.amount))} FCFA",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 4), // Espacement entre les textes
+                      Text(
+                          "Limit: ${groups.firstWhere(
+                            (group) => group.id == selectedChipIndex,
+                            orElse: () => Group(id: 0, spendingLimit: 0, createdAt: '')
+                          ).spendingLimit} FCFA",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                  ),
                   const SizedBox(height: 10),
                   Skeletonizer(
                     // Added Skeletonizer
