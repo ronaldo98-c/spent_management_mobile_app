@@ -52,7 +52,10 @@ class _SpentListScreenState extends State<SpentListScreen> {
 
     dataFetcher.fetchAndSetData(
         fetchData: () => dataManager.fetchData((json) => Spent.fromJson(json)),
-        onSetData: (data) => { setState(() => spentList = data), setState(() => filterSpentList = data) },
+        onSetData: (data) => {
+              setState(() => spentList = data),
+              setState(() => filterSpentList = data)
+            },
         onComplete: () => setState(() => isLoadingSpents = false),
         context: context);
   }
@@ -87,23 +90,28 @@ class _SpentListScreenState extends State<SpentListScreen> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Partie gauche : Avatar et message de bienvenue
+              const Column(
                 children: [
-                  const Text(
+                  Text(
                     'Dépenses',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 28,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                ],
+              ),
+              Column(
+                children: [
                   Row(
                     children: [
                       Container(
@@ -115,7 +123,8 @@ class _SpentListScreenState extends State<SpentListScreen> {
                         ),
                         child: IconButton(
                           onPressed: () {
-                            FilterModal.showAddModal(context, filterSpentList, updateSpentList);
+                            FilterModal.showAddModal(
+                                context, filterSpentList, updateSpentList);
                           },
                           icon: const Icon(Icons.filter_list),
                         ),
@@ -130,7 +139,11 @@ class _SpentListScreenState extends State<SpentListScreen> {
                         ),
                         child: IconButton(
                           onPressed: () {
-                            AddSpent.showAddModal(context, spentList, selectedChipIndex, updateSpentList); // Show modal
+                            AddSpent.showAddModal(
+                                context,
+                                spentList,
+                                selectedChipIndex,
+                                updateSpentList); // Show modal
                           },
                           icon: const Icon(Icons.add),
                         ),
@@ -139,83 +152,95 @@ class _SpentListScreenState extends State<SpentListScreen> {
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: [
-                GroupWidget(
-                  groups: groups,
-                  isLoadingGroups: isLoadingGroups,
-                  fetchSpents: fetchSpents,
-                  selectedChipIndex: selectedChipIndex,
-                  updateSelectedChip: updateSelectedChip
-                ),
-                const SizedBox(width: 5),
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Constants.singleGreyColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                       AddGroup.showAddModal(context, groups, updateGroupList);// Show modal
-                    },
-                    icon: const Icon(Icons.add),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height:3),
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  if (spentList.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Aligner à gauche
-                    mainAxisSize: MainAxisSize.min, // Ajuste la taille au contenu
-                    children: [
-                      Text(
-                         "Total: ${spentList.fold(0, (sum, item) => sum + (item.amount))} FCFA",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 4), // Espacement entre les textes
-                      Text(
-                          "Limit: ${groups.firstWhere(
-                            (group) => group.id == selectedChipIndex,
-                            orElse: () => Group(id: 0, spendingLimit: 0, createdAt: '')
-                          ).spendingLimit} FCFA",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                  GroupWidget(
+                      groups: groups,
+                      isLoadingGroups: isLoadingGroups,
+                      fetchSpents: fetchSpents,
+                      selectedChipIndex: selectedChipIndex,
+                      updateSelectedChip: updateSelectedChip),
+                  const SizedBox(width: 5),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Constants.singleGreyColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        AddGroup.showAddModal(
+                            context, groups, updateGroupList); // Show modal
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Skeletonizer(
-                    // Added Skeletonizer
-                    enabled: isLoadingSpents,
-                    child: SizedBox(
-                      height: spentList.isNotEmpty ? size.height * 0.75 : null,
-                      child: isLoadingSpents // Check if spentList is empty
-                          ? const SqueletonList() // Show EmptyList if no items
-                          : spentList.isNotEmpty
-                              ? ListView.builder(
-                                  itemCount: spentList.length,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return PageList(index: index, spentList: spentList);
-                                  },
-                                )
-                              : const EmptyList(wording: "Aucune dépense")),
-                  )
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 3),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (spentList.isNotEmpty)
+                      Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start, // Aligner à gauche
+                        mainAxisSize:
+                            MainAxisSize.min, // Ajuste la taille au contenu
+                        children: [
+                          Text(
+                            "Total: ${spentList.fold(0, (sum, item) => sum + (item.amount))} FCFA",
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                          const SizedBox(
+                              height: 4), // Espacement entre les textes
+                          Text(
+                            "Limit: ${groups.firstWhere((group) => group.id == selectedChipIndex, orElse: () => Group(id: 0, spendingLimit: 0, createdAt: '')).spendingLimit} FCFA",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 10),
+                    Skeletonizer(
+                      // Added Skeletonizer
+                      enabled: isLoadingSpents,
+                      child: SizedBox(
+                        height: spentList.isNotEmpty ? size.height * 0.75 : null,
+                        child: isLoadingSpents
+                            ? const SqueletonList() 
+                            : spentList.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: spentList.length,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return PageList(
+                                          index: index, spentList: spentList);
+                                    },
+                                  )
+                                : const EmptyList(wording: "Aucune dépense")
+                        ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

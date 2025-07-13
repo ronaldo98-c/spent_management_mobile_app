@@ -33,7 +33,7 @@ class BarChartSampleState extends State<BarChartSample> {
                   Center(
                     child: Text(
                       widget.title,
-                      style: const TextStyle(color: Colors.black, fontSize: 18)
+                      style: const TextStyle(color: Colors.black, fontSize: 16)
                     ),
                   ),
                 ],

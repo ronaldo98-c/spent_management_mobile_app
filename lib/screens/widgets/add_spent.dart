@@ -3,14 +3,12 @@ import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
 import 'package:spent_mananagement_mobile/controllers/api_controller.dart';
 
-
 class AddSpent<T> {
   final List<Spent> itemList;
   final int? selectedChipIndex;
   final Function(List<Spent>) updateSpentList;
 
-  AddSpent(this.itemList, this.selectedChipIndex,
-      this.updateSpentList); // Constructeur pour initialiser la liste
+  AddSpent(this.itemList, this.selectedChipIndex, this.updateSpentList);
 
   static Future<void> showAddModal<T>(
       BuildContext context,
@@ -21,7 +19,7 @@ class AddSpent<T> {
     final TextEditingController textField2Controller = TextEditingController();
     final TextEditingController textAreaController = TextEditingController();
 
-    bool isLoading = false; // Variable d'état pour le loader
+    bool isLoading = false;
 
     return showDialog<void>(
       context: context,
@@ -85,7 +83,8 @@ class AddSpent<T> {
                   minimumSize: const Size(100, 50)),
               onPressed: isLoading
                   ? null // Désactiver le bouton si le loader est affiché
-                  : () async { // Make the function async
+                  : () async {
+                      // Make the function async
                       if (selectedChipIndex == null) {
                         // Vérifier si selectedChipIndex est null
 
@@ -93,7 +92,6 @@ class AddSpent<T> {
                           const SnackBar(
                               content:
                                   Text('Veuillez sélectionner un groupe.')),
-
                         );
                         return; // Sortir de la fonction si selectedChipIndex est null
                       }
@@ -101,13 +99,18 @@ class AddSpent<T> {
                       if (textField1Controller.text.isEmpty ||
                           textField2Controller.text.isEmpty ||
                           textAreaController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Veuillez remplir tous les champs.')),);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text('Veuillez remplir tous les champs.')),
+                        );
                         return; // Sortir de la fonction si des champs sont vides
                       }
 
                       // Set isLoading to true before calling _handleAddItem
                       isLoading = true; // Update loading state
-                      await _handleAddItem( // Await the function call
+                      await _handleAddItem(
+                          // Await the function call
                           textField1Controller,
                           textField2Controller,
                           textAreaController,
@@ -120,9 +123,7 @@ class AddSpent<T> {
               child: isLoading
                   ? const CircularProgressIndicator() // Afficher le loader
                   : const Text('Enregistrer'),
-
             ),
-
           ],
         );
       },
@@ -140,7 +141,7 @@ class AddSpent<T> {
       BuildContext context,
       int? selectedChipIndex,
       Function(List<Spent>) updateSpentList,
-       bool isLoading) async {
+      bool isLoading) async {
     // Make it async
     // Récupérer les valeurs des contrôleurs de texte
     isLoading = true;
@@ -150,7 +151,8 @@ class AddSpent<T> {
 
     // Construire l'objet newItem sous forme de Map
     Map<String, dynamic> newItem = {
-      "group_id": selectedChipIndex, // Remplacez par la valeur appropriée si nécessaire
+      "group_id":
+          selectedChipIndex, // Remplacez par la valeur appropriée si nécessaire
       "amount": int.tryParse(amount) ?? 0, // Convertir le montant en entier
       "raison": raison,
       "description": description
@@ -159,7 +161,8 @@ class AddSpent<T> {
     // Appel de l'ApiController pour envoyer les données
     ApiController apiController = ApiController();
     try {
-      final response = await apiController.postData('spent/store', newItem); // Await the response
+      final response = await apiController.postData(
+          'spent/store', newItem); // Await the response
       // Gérer la réponse ici
       isLoading = false;
       itemList.add(Spent.fromJson(response['data']));

@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:spent_mananagement_mobile/models/spents.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
+import 'package:spent_mananagement_mobile/models/spents.dart';
 
 class PageList extends StatelessWidget {
   const PageList({

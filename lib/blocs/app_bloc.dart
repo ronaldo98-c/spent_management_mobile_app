@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:spent_mananagement_mobile/services/base/app_exceptions.dart';
 
 import 'app_event.dart';

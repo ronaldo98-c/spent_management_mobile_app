@@ -8,16 +8,13 @@ class ExpensesData {
 
   factory ExpensesData.fromJson(Map<String, dynamic> json) {
     return ExpensesData(
-      data: List<double>.from(json['totalMonthsOfYearAmountSpent'].map((item) => item.toDouble())),
-      spent: List<Spent>.from(json['lastSpent'].map((item) =>  
-      Spent(
-        id: item['id'],
-        amount: item['amount'],
-        raison: item['raison'],
-        desciption: item['description'],
-        createdAt: item['created_at']
-      ) 
-    ))
-    );
+        data: List<double>.from(json['totalMonthsOfYearAmountSpent']
+            .map((item) => item.toDouble())),
+        spent: List<Spent>.from(json['lastSpent'].map((item) => Spent(
+            id: item['id'],
+            amount: item['amount'],
+            raison: item['raison'],
+            desciption: item['description'],
+            createdAt: item['created_at']))));
   }
 }

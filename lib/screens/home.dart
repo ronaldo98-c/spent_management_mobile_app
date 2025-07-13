@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       "Mr, $user",
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Statistiques',
                     style: TextStyle(
                       color: Constants.darkBlueColor,
-                      fontSize: 30,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -230,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     "Dernières dépenses",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Constants.darkBlueColor,
                       fontWeight: FontWeight.bold,
                     ),

@@ -35,7 +35,7 @@ class _EmptyList extends State<EmptyList> {
           Text(
             widget.wording,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Constants.darkBlueColor,
             ),
