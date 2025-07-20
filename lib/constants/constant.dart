@@ -9,7 +9,7 @@ class Constants {
   static var singleGreyColor =  const Color.fromRGBO(231, 232, 235,1);
 
 
-   static List<String> months = [
+  static List<String> months = [
     'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
   ];
 }

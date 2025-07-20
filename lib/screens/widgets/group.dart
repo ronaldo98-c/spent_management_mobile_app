@@ -26,55 +26,65 @@ class _GroupWidgetState extends State<GroupWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: widget.isLoadingGroups // Vérification de l'état de chargement
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(4, (index) => buildChip())),
-            )
-          : Row(
-              children: widget.groups.map((group) {
-                // Utilisation de widget.groups
-                int index = group.id;
-                return GestureDetector(
-                  onTap: () {
-                    widget.updateSelectedChip(index);
-                    widget.fetchSpents(group.id);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 7),
-                    child: Chip(
-                      label: Text(
-                        group.name ?? '',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: widget.selectedChipIndex == index
-                              ? Colors.white // Couleur lorsque sélectionné
-                              : Constants.greyColor
-                        )
-                      ),
-                      backgroundColor: widget.selectedChipIndex == index
-                          ? Constants
-                              .darkBlueColor // Couleur lorsque sélectionné
-                          : Constants.singleGreyColor,
-                      side: BorderSide(
-                        color: widget.selectedChipIndex == index
-                            ? Constants
-                                .darkBlueColor // Couleur de bordure lorsque sélectionné
-                            : Constants.singleGreyColor,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+    return SizedBox(
+      height: 50,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7),
+          child: widget.isLoadingGroups
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(4, (index) => 
+                    Padding(
+                      padding: const EdgeInsets.only(right: 14),
+                      child: buildChip(),
                     ),
                   ),
-                );
-              }).toList(),
-            ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.groups.expand((group) {
+                    int index = group.id;
+                    return [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 14),
+                        child: GestureDetector(
+                          onTap: () {
+                            widget.updateSelectedChip(index);
+                            widget.fetchSpents(group.id);
+                          },
+                          child: Chip(
+                            label: Text(
+                              group.name ?? '',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                color: widget.selectedChipIndex == index
+                                    ? Colors.white
+                                    : Constants.greyColor,
+                              ),
+                            ),
+                            backgroundColor: widget.selectedChipIndex == index
+                                ? Constants.darkBlueColor
+                                : Constants.singleGreyColor,
+                            side: BorderSide(
+                              color: widget.selectedChipIndex == index
+                                  ? Constants.darkBlueColor
+                                  : Constants.singleGreyColor,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ];
+                  }).toList(),
+                ),
+        ),
+      ),
     );
   }
 }

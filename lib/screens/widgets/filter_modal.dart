@@ -129,7 +129,7 @@ class FilterModal {
 
         // Vérifier si la date est dans l'intervalle
         return spentDate
-                .isAfter(filterStartDate.subtract(const Duration(days: 1))) &&
+                .isAfter(filterStartDate) &&
             spentDate.isBefore(filterEndDate.add(const Duration(days: 1)));
       }).toList();
 

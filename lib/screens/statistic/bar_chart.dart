@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-//import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:spent_mananagement_mobile/constants/constant.dart';
 
 class BarChartSample extends StatefulWidget {
@@ -44,32 +43,45 @@ class BarChartSampleState extends State<BarChartSample> {
                   BarChartData(
                     alignment: BarChartAlignment.spaceAround,
                     maxY: 90000,
-                    barGroups: widget.data.map((d) {
-                      int index = widget.data.indexOf(d);
-                      double value = d;
+                    barGroups: List.generate(widget.period.length, (index) {
+                      // Si la valeur existe pour cette période, on l'utilise, sinon 0
+                      double value = index < widget.data.length ? widget.data[index] : 0;
                       return BarChartGroupData(
                         x: index,
                         barRods: [
-                          BarChartRodData(toY: value, color: Constants.darkBlueColor, width: 16),
+                          BarChartRodData(
+                            toY: value, 
+                            color: value > 0 ? Constants.darkBlueColor : Colors.transparent,
+                            width: 16,
+                          ),
                         ],
                       );
-                    }).toList(),
+                    }),
                     titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
                           getTitlesWidget: (double value, TitleMeta meta) {
-                            var style = const TextStyle(fontSize: 10);
-                            return SideTitleWidget(
-                              axisSide: meta.axisSide,
-                              child: Text(widget.period[value.toInt() % 12], style: style),
-                            );
+                            final index = value.toInt();
+                            if (index >= 0 && index < widget.period.length) {
+                              return SideTitleWidget(
+                                axisSide: meta.axisSide,
+                                space: 4,
+                                child: Text(
+                                  widget.period[index],
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
                           },
+                          interval: 1, // Affiche toutes les périodes
+                          reservedSize: 40, // Espace réservé pour les labels
                         ),
                       ),
                       leftTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
-                      ), 
+                      ),
                       topTitles: const AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
                       ),

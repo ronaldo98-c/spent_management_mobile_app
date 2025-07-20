@@ -163,12 +163,15 @@ class _SpentListScreenState extends State<SpentListScreen> {
             children: [
               Row(
                 children: [
-                  GroupWidget(
+                  Expanded(
+                    child: GroupWidget(
                       groups: groups,
                       isLoadingGroups: isLoadingGroups,
                       fetchSpents: fetchSpents,
                       selectedChipIndex: selectedChipIndex,
-                      updateSelectedChip: updateSelectedChip),
+                      updateSelectedChip: updateSelectedChip,
+                    ),
+                  ),
                   const SizedBox(width: 5),
                   Container(
                     width: 50,
@@ -179,8 +182,7 @@ class _SpentListScreenState extends State<SpentListScreen> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        AddGroup.showAddModal(
-                            context, groups, updateGroupList); // Show modal
+                        AddGroup.showAddModal(context, groups, updateGroupList); // Show modal
                       },
                       icon: const Icon(Icons.add),
                     ),
@@ -193,28 +195,34 @@ class _SpentListScreenState extends State<SpentListScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (spentList.isNotEmpty)
-                      Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start, // Aligner à gauche
-                        mainAxisSize:
-                            MainAxisSize.min, // Ajuste la taille au contenu
-                        children: [
-                          Text(
-                            "Total: ${spentList.fold(0, (sum, item) => sum + (item.amount))} FCFA",
-                            style: const TextStyle(fontSize: 13),
+                    Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start, // Aligner à gauche
+                      mainAxisSize:
+                          MainAxisSize.min, // Ajuste la taille au contenu
+                      children: [
+                        Text(
+                          "Total: ${spentList.fold(0, (sum, item) => sum + (item.amount))} FCFA",
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        const SizedBox(height: 4), // Espacement entre les textes
+                        Text(
+                          "Limite: ${groups.firstWhere((group) => group.id == selectedChipIndex, orElse: () => Group(id: 0, spendingLimit: 0, createdAt: '')).spendingLimit} FCFA",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(
-                              height: 4), // Espacement entre les textes
-                          Text(
-                            "Limit: ${groups.firstWhere((group) => group.id == selectedChipIndex, orElse: () => Group(id: 0, spendingLimit: 0, createdAt: '')).spendingLimit} FCFA",
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+                        const SizedBox(height: 4), 
+                        Text(
+                          "Reste: ${groups.firstWhere((group) => group.id == selectedChipIndex, orElse: () => Group(id: 0, spendingLimit: 0, createdAt: '')).spendingLimit - spentList.fold(0, (sum, item) => sum + (item.amount))} FCFA",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 10),
                     Skeletonizer(
                       // Added Skeletonizer
